@@ -10,9 +10,9 @@ Host:
 Validated:
 - scripts/verify_rsl_rl.py passes
 - Velocity-G1-History-v0 headless eval reaches Running evaluation and exits with --num_steps
-- WebRTC/livestream in WSL currently black-screen due CUDA/Vulkan interop/shared resource failure
-- Prioritize headless numerical validation and audit scripts before GUI
+- Debug-G1-Object-v0 headless train smoke test passes
+- G1-PickPlace-Tracking-v0 headless train smoke test passes
 
-Pending:
-- Debug-G1-Object-v0 train smoke test
-- G1-PickPlace-Tracking-v0 train smoke test
+Known limitation:
+- WSL WebRTC/livestream is black-screen due CUDA/Vulkan interop/shared-resource failure.
+- For now, prioritize headless numerical validation and audit logs.
