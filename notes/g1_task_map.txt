@@ -1,0 +1,32 @@
+# G1 task map for longbox push migration
+
+Official G1 tasks observed locally:
+- Velocity-G1-History-v0
+- Velocity-Height-G1-v0
+- Velocity-Height-G1-Distillation-Recurrent-v0
+- Velocity-Height-G1-Distillation-History-v0
+- HeightTracking-G1-v0
+- Tracking-Flat-G1-v0
+- Debug-G1-v0
+- Debug-G1-Object-v0
+- G1-PickPlace-Tracking-v0
+- G1-PickPlace-Tracking-v0-Debug
+- G1-PickPlace-Tracking-v0-Record
+- G1-PickPlace-Tracking-v0-GR00T-Inference
+
+Preferred base candidates:
+1. G1-PickPlace-Tracking-v0
+   Reason: official G1 with hands + object interaction.
+2. Debug-G1-Object-v0
+   Reason: smallest G1 + object debug scene; useful for object spawn/contact sanity.
+3. Velocity-Height-G1-v0
+   Reason: standing/height behavior reference, not object manipulation.
+
+Longbox target:
+- Robot: Unitree G1
+- Object: longbox 1.6 x 0.8 x 0.8 m
+- Direction: push along +x from box rear face
+- box_start_x approx 1.05
+- target_x approx 2.05
+- first success: box_dx >= 0.5 m, upright robot, yaw not severe
+- second success: box_dx >= 1.0 m, base follows, hands stay near rear face
