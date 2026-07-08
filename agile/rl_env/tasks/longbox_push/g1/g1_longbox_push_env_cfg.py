@@ -63,6 +63,12 @@ class G1LongBoxPushEnvCfg(G1PickPlaceTrackingEnvCfg):
         self.scene.object.init_state.pos = [1.05, 0.0, 0.4]
         self.scene.object.init_state.rot = [1.0, 0.0, 0.0, 0.0]
 
+        # Disable pick-place trajectory reset.
+        # For longbox push, the robot should start behind the rear face,
+        # not from the pick-place motion trajectory.
+        if hasattr(self.events, "reset_robot"):
+            self.events.reset_robot = None
+
         # Make reset deterministic for the first smoke test.
         self.events.reset_object.params["pose_range"] = {
             "x": (0.0, 0.0),
