@@ -25,3 +25,13 @@ uv.lock
 docs/build/
 
 CLAUDE.md
+
+# Local Isaac Lab / AGILE runtime outputs
+/logs/
+/outputs/
+/runs/
+/wandb/
+/checkpoints/
+/tmp/
+/.pytest_cache/
+/.mypy_cache/
