@@ -16,6 +16,7 @@
 from . import debug, locomotion, locomotion_height, pick_place, stand_up, tracking
 
 __all__ = [
+    "longbox_push",
     "debug",
     "locomotion",
     "locomotion_height",
