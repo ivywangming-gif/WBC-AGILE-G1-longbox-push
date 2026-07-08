@@ -9,11 +9,17 @@ Phase goals:
 """
 
 import isaaclab.sim as sim_utils
-from isaaclab.managers import EventTermCfg as EventTerm, RewardTermCfg as RewTerm, SceneEntityCfg
+from isaaclab.managers import (
+    EventTermCfg as EventTerm,
+    ObservationTermCfg as ObsTerm,
+    RewardTermCfg as RewTerm,
+    SceneEntityCfg,
+)
 from isaaclab.sim.schemas.schemas_cfg import RigidBodyPropertiesCfg
 from isaaclab.utils import configclass
 
 from agile.rl_env.tasks.longbox_push import longbox_push_events as lb_events
+from agile.rl_env.tasks.longbox_push import longbox_push_observations as lb_obs
 from agile.rl_env.tasks.longbox_push import longbox_push_rewards as lb_rewards
 from agile.rl_env.tasks.pick_place.g1.g1_pick_place_tracking_env_cfg import G1PickPlaceTrackingEnvCfg
 
@@ -159,3 +165,86 @@ class G1LongBoxPushEnvCfg(G1PickPlaceTrackingEnvCfg):
                 "asset_cfg": SceneEntityCfg("object"),
             },
         )
+
+        # LONGBOX_SANITIZE_PICKPLACE_INHERITANCE
+        # Remove pick-place trajectory command and all terms that depend on it.
+        # The longbox push prototype should not keep stale tracking-command observations,
+        # rewards, terminations, or metrics from G1 pick-place.
+        if hasattr(self.commands, "tracking_command"):
+            self.commands.tracking_command = None
+
+        for _name in [
+            "motion_anchor_pos_b",
+            "motion_anchor_ori_b",
+            "motion_joint_pos_delta",
+            "object_pos_error",
+            "trajectory_progress",
+        ]:
+            if hasattr(self.observations.policy, _name):
+                setattr(self.observations.policy, _name, None)
+
+        for _name in [
+            "bad_base_pose",
+            "bad_base_rotation",
+            "bad_joint_pos",
+        ]:
+            if hasattr(self.terminations, _name):
+                setattr(self.terminations, _name, None)
+
+        # Temporarily remove inherited regularizers that are currently reporting NaN.
+        # Re-enable one by one only after finite rollout is confirmed.
+        for _name in [
+            "root_acc",
+            "torso_ang_vel",
+            "action_rate_l2",
+            "action_l2",
+            "dof_vel_l2",
+            "dof_acc_l2",
+            "joint_pos_limit",
+        ]:
+            if hasattr(self.rewards, _name):
+                setattr(self.rewards, _name, None)
+
+        if hasattr(self.curriculum, "increase_action_rate_penalty"):
+            self.curriculum.increase_action_rate_penalty = None
+
+        # LONGBOX_OBS_SANITIZE_V2
+        # Remove all pick-place observation terms that require tracking_command.
+        # We deliberately keep Command Manager empty for longbox push.
+        if hasattr(self.commands, "tracking_command"):
+            self.commands.tracking_command = None
+
+        for _name in [
+            "motion_anchor_pos_b",
+            "motion_anchor_ori_b",
+            "motion_joint_pos_delta",
+            "object_to_hand_pos",
+            "object_pos_error",
+            "trajectory_progress",
+        ]:
+            if getattr(self.observations, "policy", None) is not None and hasattr(self.observations.policy, _name):
+                setattr(self.observations.policy, _name, None)
+
+        # Add command-free longbox observations.
+        self.observations.policy.box_to_base_pos_w = ObsTerm(
+            func=lb_obs.box_to_base_pos_w,
+            params={
+                "robot_cfg": SceneEntityCfg("robot"),
+                "box_cfg": SceneEntityCfg("object"),
+            },
+        )
+        self.observations.policy.base_to_rear_face_x = ObsTerm(
+            func=lb_obs.base_to_rear_face_x,
+            params={
+                "robot_cfg": SceneEntityCfg("robot"),
+                "box_cfg": SceneEntityCfg("object"),
+                "box_half_length_x": 0.8,
+            },
+        )
+        self.observations.policy.box_yaw = ObsTerm(
+            func=lb_obs.box_yaw,
+            params={
+                "box_cfg": SceneEntityCfg("object"),
+            },
+        )
+
