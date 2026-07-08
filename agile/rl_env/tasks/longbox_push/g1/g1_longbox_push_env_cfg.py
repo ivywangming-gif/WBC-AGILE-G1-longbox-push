@@ -31,8 +31,23 @@ class G1LongBoxPushEnvCfg(G1PickPlaceTrackingEnvCfg):
 
         # Robot behind the longbox rear face, facing +x.
         # Box center x=1.05, length x=1.6 -> rear face x=0.25.
-        self.scene.robot.init_state.pos = [-0.65, 0.0, 0.8]
+        self.scene.robot.init_state.pos = [-0.25, 0.0, 0.8]
         self.scene.robot.init_state.rot = [1.0, 0.0, 0.0, 0.0]
+        # Standing-friendly lower-body pose copied from the official G1 pick-place baseline.
+        self.scene.robot.init_state.joint_pos = {
+            ".*_hip_pitch_joint": -0.10,
+            ".*_knee_joint": 0.30,
+            ".*_ankle_pitch_joint": -0.20,
+            "left_shoulder_pitch_joint": 0.19,
+            "left_shoulder_roll_joint": 0.4638,
+            "left_shoulder_yaw_joint": -0.2448,
+            "left_elbow_joint": 0.9777,
+            "left_wrist_roll_joint": -0.0926,
+            "left_wrist_pitch_joint": -0.0179,
+            "left_wrist_yaw_joint": -0.0225,
+            "left_hand_thumb_1_joint": 1.0,
+            "left_hand_thumb_2_joint": 0.3,
+        }
 
         # Replace pick-place USD object with procedural longbox.
         self.scene.object.prim_path = "{ENV_REGEX_NS}/Object"

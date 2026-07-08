@@ -82,13 +82,17 @@ def main():
             base_pos = robot.data.root_pos_w
             box_yaw = quat_yaw_wxyz(box.data.root_quat_w)
 
+            rear_face_x = box_pos[0, 0] - 0.8
+            base_to_rear = rear_face_x - base_pos[0, 0]
             print(
                 "step="
                 f"{i + 1} "
                 f"box_x={box_pos[0, 0].item():.4f} "
                 f"box_dx={(box_pos[0, 0] - box_x0[0]).item():.4f} "
+                f"rear_face_x={rear_face_x.item():.4f} "
                 f"base_x={base_pos[0, 0].item():.4f} "
                 f"base_dx={(base_pos[0, 0] - base_x0[0]).item():.4f} "
+                f"base_to_rear={base_to_rear.item():.4f} "
                 f"robot_z={base_pos[0, 2].item():.4f} "
                 f"box_yaw={box_yaw[0].item():.4f}"
             )
